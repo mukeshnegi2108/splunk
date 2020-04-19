@@ -1,0 +1,45 @@
+version: "3.7"
+services: 
+    enterprise:
+        container_name: secontainer
+        build:
+            context: dockerRepo/SE
+        volumes:
+            - type: bind
+              source: ./dockerRepo/SUF
+              target: /slf
+        ports:
+            - 8000:8000
+        environment: 
+            #- TZ=Asia/Kolkata
+            - DEBIAN_FRONTEND=noninteractive
+            #- SPLUNK_START_ARGS=--accept-license
+        networks: 
+            - splunk
+
+
+    forwarder:
+        container_name: sufcontainer
+        build:
+            context: dockerRepo/SUF
+        volumes:
+            - type: bind
+              source: ./dockerRepo/SUF
+              target: /slf
+        ports:
+            - 9997:9997
+            - 8089:8089
+        environment: 
+            #- TZ=Asia/Kolkata
+            - DEBIAN_FRONTEND=noninteractive
+            #- SPLUNK_START_ARGS=--accept-license
+        networks: 
+            - splunk
+        depends_on: 
+            - enterprise
+
+
+networks:
+  splunk:
+    driver: bridge
+
